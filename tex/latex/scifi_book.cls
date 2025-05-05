@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{scifi_book}[2025-04-19 SciFi book template v3]
+\ProvidesClass{scifi_book}[2025-05-05 SciFi book template v4]
 \LoadClass[11pt,a5paper,twoside,openright]{extbook}
 
 
@@ -47,52 +47,24 @@
 % fixes chapter pages not having correct footer (and header)
 \patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
 
+% dropcap style
+\setcounter{DefaultLines}{3}
+\renewcommand{\LettrineFontHook}{\sffamily\fontseries{bx}}
 
-% fakesc: taken from https://tex.stackexchange.com/questions/64582/faking-small-caps-in-xelatex
-% fake small caps
-\ExplSyntaxOn
-\NewDocumentCommand{\fakesc}{ o m }
-{
-    \guido_fakesc:n { #2 }
-    \IfNoValueTF{#1}
-    {
-        \tl_use:N \l__guido_temp_tl
-    }
-    {
-        \cs_set_eq:NN #1 \l__guido_temp_tl
-    }
-}
-\cs_new_protected:Npn \guido_fakesc:n #1
-{
-    \tl_set:Nn \l__guido_text_tl { #1 }
-    \tl_replace_all:Nnn \l__guido_text_tl { ~ } { \q_space }
-    \tl_set:Nn \l__guido_temp_tl { \group_begin: \footnotesize }
-    \tl_map_inline:Nn \l__guido_text_tl
-    {
-        \token_if_eq_meaning:NNTF ##1 \q_space
-        {
-            \tl_put_right:Nn \l__guido_temp_tl { ~ }
-        }
-        {
-            \int_compare:nTF { \char_value_uccode:n { `##1 } = `##1 }
-            {
-                \tl_put_right:Nn \l__guido_temp_tl { {\normalsize ##1} }
-            }
-            {
-                \tl_put_right:Nn \l__guido_temp_tl { \tl_upper_case:n { ##1 } }
-            }
-        }
-    }
-    \tl_put_right:Nn \l__guido_temp_tl { \group_end: }
-}
-\quark_new:N \q_space
-\tl_new:N \l__guido_text_tl
-\tl_new:N \l__guido_temp_tl
-\ExplSyntaxOff
 
-% loctimetitle: bold and right aligned on three lines; used for location and time titles
+% loctimetitle: bold and right aligned on two lines; used for location and time titles
 \makeatletter
-\DeclareRobustCommand\loctimetitle[3]{{
+\DeclareRobustCommand\loctimetitle[2]{{
+            \setlength\partopsep{0em}
+            \begin{flushright}
+                \textsf{\textbf{#1\\#2}}
+            \end{flushright}}}
+\makeatother
+
+% loctimestitle: bold and right aligned on three lines; used for location and central and local \
+% time titles
+\makeatletter
+\DeclareRobustCommand\loctimestitle[3]{{
             \setlength\partopsep{0em}
             \begin{flushright}
                 \textsf{\textbf{#1\\#2\\#3}}
@@ -106,12 +78,12 @@
 
 % monopar: monospace with aligned small caps paragraph; used for transmission titles
 \makeatletter
-\DeclareRobustCommand\monopar[2]{\noindent\texttt{#1: \parbox[t]{\linegoal}{\fakesc{#2}}\\}}
+\DeclareRobustCommand\monopar[2]{\noindent\texttt{#1: \parbox[t]{\linegoal}{#2}\\}}
 \makeatother
 
 % monoleft: monospace left aligned small caps text; also used for transmission
 \makeatletter
-\DeclareRobustCommand\monoleft[1]{\noindent\texttt{\fakesc{#1}\\}}
+\DeclareRobustCommand\monoleft[1]{\noindent\texttt{#1\\}}
 \makeatother
 
 % monocenter: monospace center with extra formatting; used for AI communication
@@ -126,7 +98,7 @@
 
 % dropcap: big letter for start of chapter
 \makeatletter
-\DeclareRobustCommand\dropcap[1]{\lettrine{\textbf{\textsf{#1}}}{}}
+\DeclareRobustCommand\dropcap[1]{\lettrine{#1}{}}
 \makeatother
 
 % sep: seperator
