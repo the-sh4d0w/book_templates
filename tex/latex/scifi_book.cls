@@ -1,7 +1,7 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{scifi_book}[2025-05-05 SciFi book template v4]
+\ProvidesClass{scifi_book}[2025-05-14 SciFi book template v4.1]
 \LoadClass[11pt,a5paper,twoside,openright]{extbook}
-
+% FIXME: better names, style, commands
 
 % all required packages
 \RequirePackage[hidelinks]{hyperref}
@@ -19,6 +19,7 @@
 \RequirePackage{censor}
 \RequirePackage{graphicx}
 \RequirePackage[pscoord]{eso-pic}
+\RequirePackage{seqsplit}
 \RequirePackage{pdfpages}
 \RequirePackage{standalone}
 
@@ -35,7 +36,7 @@
 
 % pagestyle; header and footers
 \pagestyle{fancy}
-\fancyfoot[C]{- \textsf{\small\thepage}\ -}
+\fancyfoot[C]{\textbf{- \textsf{\small\thepage}\ -}}
 \fancyhead[CE]{\textsf{\footnotesize\textbf{\MakeUppercase\@author}}}
 \fancyhead[CO]{\textsf{\footnotesize\textbf{\MakeUppercase{\@title}:} \MakeUppercase\@subtitle}}
 \renewcommand{\headrule}{}
@@ -76,12 +77,12 @@
 \DeclareRobustCommand\boldright[1]{{\mbox{}\hfill\textsf{\textbf{#1}}\\}}
 \makeatother
 
-% monopar: monospace with aligned small caps paragraph; used for transmission titles
+% monopar: monospace with aligned paragraph; used for transmission titles
 \makeatletter
 \DeclareRobustCommand\monopar[2]{\noindent\texttt{#1: \parbox[t]{\linegoal}{#2}\\}}
 \makeatother
 
-% monoleft: monospace left aligned small caps text; also used for transmission
+% monoleft: monospace left aligned text; also used for transmission
 \makeatletter
 \DeclareRobustCommand\monoleft[1]{\noindent\texttt{#1\\}}
 \makeatother
@@ -93,7 +94,18 @@
         \texttt{</ #1 >> #2 />} \\
         \texttt{// #3 //}
     \end{tabularx}
-    \vspace*{1em}}
+    \vspace*{.8em}}
+\makeatother
+
+% datalog: monospace with formatting; used for AI logs
+\makeatletter
+\DeclareRobustCommand\datalog[4]{{\footnotesize
+            \noindent\texttt{{[#1] \seqsplit{(#2/#3)}: #4}}}}
+\makeatother
+
+% monoline: monospace line; used for internal AI system stuff
+\makeatletter
+\DeclareRobustCommand\monoline[1]{\noindent\texttt{\footnotesize{#1}}}
 \makeatother
 
 % dropcap: big letter for start of chapter
@@ -110,7 +122,7 @@
     ~\\
 }
 
-% iddef: if variable defined
+% ifxdef: if variable defined
 \makeatletter
 \DeclareRobustCommand\ifxdef[2]{
     \ifx#1\undefined
@@ -223,3 +235,6 @@
 \DeclareRobustCommand\publisher[1]{\gdef\@publisher{#1}}
 \DeclareRobustCommand\dedication[1]{\gdef\@dedication{#1}}
 \makeatother
+
+% process options
+\ProcessOptions
